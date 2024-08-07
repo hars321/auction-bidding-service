@@ -2,8 +2,8 @@ package com.intuit.bidding.api;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.intuit.bidding.core.BiddingSearchRequest;
 import com.intuit.bidding.core.entity.ApiResponse;
-import com.intuit.bidding.core.request.BiddingSearchRequest;
 import com.intuit.bidding.core.entity.Bidding;
 import com.intuit.bidding.util.ResponseUtil;
 import com.intuit.bidding.validation.ValidationUtils;

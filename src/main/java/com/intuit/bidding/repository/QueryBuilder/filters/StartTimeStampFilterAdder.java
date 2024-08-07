@@ -1,7 +1,7 @@
 package com.intuit.bidding.repository.QueryBuilder.filters;
 
+import com.intuit.bidding.core.BiddingSearchRequest;
 import com.intuit.bidding.core.enums.FilterTypeEnum;
-import com.intuit.bidding.core.request.BiddingSearchRequest;
 
 import java.util.Objects;
 
@@ -14,7 +14,7 @@ public class StartTimeStampFilterAdder extends AbstractFilterAdder {
 
     @Override
     FilterTypeEnum getFilterTypeEnum() {
-        return FilterTypeEnum.LESS_THAN_OR_EQUAL;
+        return FilterTypeEnum.GREATER_THAN_OR_EQUAL;
     }
 
     @Override

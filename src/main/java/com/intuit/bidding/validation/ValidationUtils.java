@@ -1,7 +1,7 @@
 package com.intuit.bidding.validation;
 
+import com.intuit.bidding.core.BiddingSearchRequest;
 import com.intuit.bidding.core.entity.Bidding;
-import com.intuit.bidding.core.request.BiddingSearchRequest;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.StringUtils;
 

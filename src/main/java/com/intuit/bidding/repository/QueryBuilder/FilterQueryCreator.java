@@ -1,8 +1,8 @@
 package com.intuit.bidding.repository.QueryBuilder;
 
+import com.intuit.bidding.core.BiddingSearchRequest;
 import com.intuit.bidding.core.entity.Bidding;
 import com.intuit.bidding.core.enums.BiddingSortEnum;
-import com.intuit.bidding.core.request.BiddingSearchRequest;
 import com.intuit.bidding.repository.QueryBuilder.filters.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;

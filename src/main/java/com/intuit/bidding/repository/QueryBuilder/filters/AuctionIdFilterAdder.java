@@ -1,7 +1,7 @@
 package com.intuit.bidding.repository.QueryBuilder.filters;
 
+import com.intuit.bidding.core.BiddingSearchRequest;
 import com.intuit.bidding.core.enums.FilterTypeEnum;
-import com.intuit.bidding.core.request.BiddingSearchRequest;
 import org.springframework.util.StringUtils;
 
 public class AuctionIdFilterAdder extends AbstractFilterAdder {
