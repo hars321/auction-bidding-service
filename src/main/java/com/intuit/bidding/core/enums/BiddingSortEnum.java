@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public enum BiddingSortEnum {
-    ASC, DESC
+    PRICE_ASC, PRICE_DESC, TIMESTAMP_ASC, TIMESTAMP_DESC;
 }

@@ -6,15 +6,39 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Data
 @Getter
 @Setter
 public class BiddingSearchRequest {
+    public Set<BiddingSortEnum> getSort() {
+        return sort;
+    }
+
+    public void setSort(Set<BiddingSortEnum> sort) {
+        this.sort = sort;
+    }
+
     private String auctionId;
+
+    public BiddingSearchRequest() {
+    }
+
+    public BiddingSearchRequest(String auctionId, String userId, Long startTimeStamp, Long endTimeStamp, Set<BiddingSortEnum> sort, Integer count, BidStatus bidStatus) {
+        this.auctionId = auctionId;
+        this.userId = userId;
+        this.startTimeStamp = startTimeStamp;
+        this.endTimeStamp = endTimeStamp;
+        this.sort = sort;
+        this.count = count;
+        this.bidStatus = bidStatus;
+    }
+
     private String userId;
     private Long startTimeStamp;
     private Long endTimeStamp;
-    private BiddingSortEnum sort;
+    private Set<BiddingSortEnum> sort;
     private Integer count;
     private BidStatus bidStatus;
 
@@ -34,9 +58,6 @@ public class BiddingSearchRequest {
         this.endTimeStamp = endTimeStamp;
     }
 
-    public void setSort(BiddingSortEnum sort) {
-        this.sort = sort;
-    }
 
     public void setCount(Integer count) {
         this.count = count;
@@ -62,9 +83,6 @@ public class BiddingSearchRequest {
         return endTimeStamp;
     }
 
-    public BiddingSortEnum getSort() {
-        return sort;
-    }
 
     public Integer getCount() {
         return count;

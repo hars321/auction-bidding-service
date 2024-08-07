@@ -1,52 +1,72 @@
 package com.intuit.bidding.api;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.intuit.bidding.core.BiddingSearchRequest;
 import com.intuit.bidding.core.entity.ApiResponse;
 import com.intuit.bidding.core.entity.Bidding;
+import com.intuit.bidding.service.BiddingService;
 import com.intuit.bidding.util.ResponseUtil;
 import com.intuit.bidding.validation.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.intuit.bidding.service.BiddingService;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/v1/bidding")
+@RequestMapping(value = "/api/v1/bidding", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class BiddingAPI {
 
     @Autowired
     private BiddingService biddingService;
 
-    @PostMapping("/new")
-    public ResponseEntity<ApiResponse<Bidding>> addNewBid(@RequestBody Bidding bidding){
-        if(!ValidationUtils.validateNewBid(bidding)){
-            return ResponseUtil.errorResponse("Invalid Bid placed",HttpStatus.BAD_REQUEST);
-        }
-//        validate pricing with basePrice;
-        Bidding result = biddingService.saveBid(bidding);
-        if(Objects.nonNull(result)){
+    @PostMapping("/save")
+    public ResponseEntity<ApiResponse<Bidding>> addNewBid(@RequestBody Bidding bidding) {
+        try {
+            ValidationUtils.validateNewBid(bidding);
+            Bidding result = biddingService.saveBid(bidding);
             return ResponseUtil.successResponse(result);
+        } catch (Exception e) {
+            return ResponseUtil.errorResponse("Failed to place this bid", e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseUtil.errorResponse("Failed to place this bid", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @PostMapping("/search/auctionId")
+    @PostMapping("/filter")
     public ResponseEntity<ApiResponse<List<Bidding>>> filterBid(@RequestBody BiddingSearchRequest biddingSearchRequest) {
-        if(!ValidationUtils.validateBiddingSearchRequest(biddingSearchRequest)){
-            return ResponseUtil.errorResponse("Invalid Bidding Search Request",HttpStatus.BAD_REQUEST);
+        try {
+            ValidationUtils.validateBiddingSearchRequest(biddingSearchRequest);
+            return ResponseUtil.successResponse(biddingService.filterBid(biddingSearchRequest));
+        } catch (Exception e) {
+            return ResponseUtil.errorResponse("Failed", e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseUtil.successResponse(biddingService.filterBid(biddingSearchRequest));
     }
 
     @PostMapping("/search")
     public List<Bidding> searchAll() {
         return biddingService.searchAll();
+    }
+
+    @GetMapping("/accepted-bid")
+    public ResponseEntity<ApiResponse<Bidding>> getAcceptedBidForAuction(@RequestParam("auctionId") String auctionId) {
+        try {
+            ValidationUtils.validateAuctionId(auctionId);
+            Bidding bidding = biddingService.getAcceptedBidForAuction(auctionId);
+            return ResponseUtil.successResponse(bidding, "Success");
+        } catch (Exception e) {
+            return ResponseUtil.errorResponse("Error", e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/accept-final-bid")
+    public ResponseEntity<ApiResponse<Bidding>> updateWinningBid(@RequestParam("auctionId") String auctionId) {
+        try {
+            ValidationUtils.validateAuctionId(auctionId);
+            return ResponseUtil.successResponse(biddingService.updateWinningBid(auctionId));
+        } catch (Exception e) {
+            return ResponseUtil.errorResponse("Error fetching Bid details", e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
 

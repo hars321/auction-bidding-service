@@ -7,40 +7,57 @@ import com.intuit.bidding.repository.QueryBuilder.filters.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class FilterQueryCreator {
-    public static TypedQuery<Bidding> createFilterQuery(EntityManager entityManager, BiddingSearchRequest biddingSearchRequest){
+    public static TypedQuery<Bidding> createFilterQuery(EntityManager entityManager, BiddingSearchRequest biddingSearchRequest) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Bidding> query = builder.createQuery(Bidding.class);
         Root<Bidding> root = query.from(Bidding.class);
         List<Predicate> predicates = new ArrayList<>();
-        for(AbstractFilterAdder filterAdder : getFilterList()){
-            filterAdder.addFilter(biddingSearchRequest,builder,root,predicates);
+        for (AbstractFilterAdder filterAdder : getFilterList()) {
+            filterAdder.addFilter(biddingSearchRequest, builder, root, predicates);
         }
-        query = addSort(biddingSearchRequest.getSort(),root,builder,query);
+        query = addSort(biddingSearchRequest.getSort(), root, builder, query);
         query.where(builder.and(predicates.toArray(new Predicate[0])));
         return entityManager.createQuery(query);
     }
 
-    private static CriteriaQuery<Bidding> addSort(BiddingSortEnum sortEnum, Root<Bidding> root, CriteriaBuilder builder, CriteriaQuery<Bidding> query) {
-        Order order = null;
-        if(Objects.nonNull(sortEnum) && BiddingSortEnum.ASC.equals(sortEnum)){
-            order = builder.asc(root.get("bidPrice"));
+    private static CriteriaQuery<Bidding> addSort(Set<BiddingSortEnum> sortEnumSet, Root<Bidding> root, CriteriaBuilder builder, CriteriaQuery<Bidding> query) {
+        List<Order> orderList = new ArrayList<>();
+        if(sortEnumSet.isEmpty()){
+            return query;
         }
-        if(Objects.nonNull(sortEnum) && BiddingSortEnum.DESC.equals(sortEnum)){
-            order = builder.desc(root.get("bidPrice"));
+        if(sortEnumSet.contains(BiddingSortEnum.PRICE_ASC) || sortEnumSet.contains(BiddingSortEnum.PRICE_DESC)){
+            getPriceSort(orderList,sortEnumSet,root,builder,query);
         }
-        if(Objects.nonNull(order)){
-            query.orderBy(order);
+        if (sortEnumSet.contains(BiddingSortEnum.TIMESTAMP_DESC) || sortEnumSet.contains(BiddingSortEnum.TIMESTAMP_ASC)) {
+            getTimeStampSort(orderList,sortEnumSet,root,builder,query);
         }
         return query;
     }
 
-    public static List<AbstractFilterAdder> getFilterList(){
+    private static void getPriceSort(List<Order> orderList,Set<BiddingSortEnum> sortEnumSet, Root<Bidding> root, CriteriaBuilder builder, CriteriaQuery<Bidding> query) {
+        if (sortEnumSet.contains(BiddingSortEnum.PRICE_ASC)) {
+            orderList.add(builder.asc(root.get("bidPrice")));
+        }
+        else if (sortEnumSet.contains(BiddingSortEnum.PRICE_DESC)) {
+            orderList.add(builder.desc(root.get("bidPrice")));
+        }
+    }
+
+    private static void getTimeStampSort(List<Order> orderList,Set<BiddingSortEnum> sortEnumSet, Root<Bidding> root, CriteriaBuilder builder, CriteriaQuery<Bidding> query) {
+        if (sortEnumSet.contains(BiddingSortEnum.TIMESTAMP_ASC)) {
+            orderList.add(builder.asc(root.get("timeStamp")));
+        }
+        else if (sortEnumSet.contains(BiddingSortEnum.TIMESTAMP_DESC)) {
+            orderList.add(builder.desc(root.get("timeStamp")));
+        }
+    }
+
+    public static List<AbstractFilterAdder> getFilterList() {
         List<AbstractFilterAdder> filterAdders = new ArrayList<>();
         filterAdders.add(new AuctionIdFilterAdder());
         filterAdders.add(new BidStatusFilterAdder());
