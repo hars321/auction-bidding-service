@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -30,7 +31,7 @@ public class BiddingSearchRequest {
         this.userId = userId;
         this.startTimeStamp = startTimeStamp;
         this.endTimeStamp = endTimeStamp;
-        this.sort = sort;
+        this.sort = new HashSet<>();
         this.count = count;
         this.bidStatus = bidStatus;
     }
@@ -38,7 +39,7 @@ public class BiddingSearchRequest {
     private String userId;
     private Long startTimeStamp;
     private Long endTimeStamp;
-    private Set<BiddingSortEnum> sort;
+    private Set<BiddingSortEnum> sort = new HashSet<>();
     private Integer count;
     private BidStatus bidStatus;
 

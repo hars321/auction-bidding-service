@@ -11,5 +11,4 @@ import java.util.List;
 @Repository
 public interface BiddingRepository extends JpaRepository<Bidding, String>, CustomBiddingRepository {
     List<Bidding> searchBidsByAuctionId(String auctionId);
-    void updateBidStatus(String id, BidStatus status);
 }

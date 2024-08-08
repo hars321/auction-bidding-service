@@ -65,8 +65,8 @@ public class BiddingService {
         if (Objects.isNull(auction)) {
             throw new RuntimeException("Invalid Auction ID, auction does not exists");
         }
-        if (auction.getAuctionEndTimeStamp() > getCurrentTimeStamp() || !auction.getAuctionStatus().equals(AuctionStatus.COMPLETED)) {
-            throw new RuntimeException("Winning Bid can only be updated after auction ends");
+        if (auction.getAuctionEndTimeStamp() > getCurrentTimeStamp() || !auction.getAuctionStatus().equals(AuctionStatus.BIDDING_CLOSED)) {
+            throw new RuntimeException("Winning Bid can only be updated after bidding gets closed");
         }
         Bidding acceptedBid = getAcceptedBidForAuction(auctionId);
         if (Objects.nonNull(acceptedBid)) {
@@ -74,14 +74,15 @@ public class BiddingService {
         }
         Bidding highestActiveBid = getHighestActiveBid(auction);
         if (Objects.nonNull(highestActiveBid)) {
-            highestActiveBid.setBidStatus(BidStatus.BID_ACCEPTED);
             acceptBid(highestActiveBid);
+//          sendNotificationToUser();
         }
         return highestActiveBid;
     }
 
     private void acceptBid(Bidding highestActiveBid) {
-        biddingRepository.updateBidStatus(highestActiveBid.getId(), BidStatus.BID_ACCEPTED);
+        highestActiveBid.setBidStatus(BidStatus.BID_ACCEPTED);
+        biddingRepository.save(highestActiveBid);
     }
 
     private Bidding getHighestActiveBid(Auction auction) {

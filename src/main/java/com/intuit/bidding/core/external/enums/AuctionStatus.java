@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public enum AuctionStatus {
-    LISTED, IN_PROGRESS, COMPLETED, DECLINED
+    LISTED, IN_PROGRESS, BIDDING_CLOSED, AUCTION_COMPLETED, DECLINED
 }
